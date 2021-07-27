@@ -114,19 +114,34 @@ function Nav() {
         <Divider />
         <Collapse in={expand} timeout="auto" unmountOnExit>
           <List>
-            <ListItem button key="chapter" component={NavLink} to="/chapter">
+            <ListItem
+              button
+              key="chapter"
+              component={NavLink}
+              to="/chapter/hsc21"
+            >
               <ListItemIcon>
                 <BookmarkIcon />
               </ListItemIcon>
               <ListItemText primary="HSC 21" />
             </ListItem>
-            <ListItem button key="chapter" component={NavLink} to="/chapter">
+            <ListItem
+              button
+              key="chapter"
+              component={NavLink}
+              to="/chapter/hsc22"
+            >
               <ListItemIcon>
                 <BookmarkIcon />
               </ListItemIcon>
               <ListItemText primary="HSC 22" />
             </ListItem>
-            <ListItem button key="chapter" component={NavLink} to="/chapter">
+            <ListItem
+              button
+              key="chapter"
+              component={NavLink}
+              to="/chapter/master"
+            >
               <ListItemIcon>
                 <BookmarkIcon />
               </ListItemIcon>
@@ -211,8 +226,14 @@ function Nav() {
             <Route path="/about">
               <About />
             </Route>
-            <Route path="/chapter">
-              <Chapter />
+            <Route path="/chapter/hsc21">
+              <Chapter name="hsc 21" />
+            </Route>
+            <Route path="/chapter/hsc22">
+              <Chapter name="hsc 22" />
+            </Route>
+            <Route path="/chapter/master">
+              <Chapter name="hsc master" />
             </Route>
           </Switch>
         </div>

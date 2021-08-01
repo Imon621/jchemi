@@ -15,31 +15,31 @@ import {} from "@material-ui/core";
 const data = {
   classes: [
     {
+      id: 1,
       no: 1,
       name: "basic class",
-      link: "www.test.com",
-      linkText: "click me",
+      link: "http://www.test.com",
       date: "12 jun 21",
     },
     {
+      id: 2,
       no: 2,
       name: "2nos class",
-      link: "www.test.com",
-      linkText: "click me",
+      link: "http://www.test.com",
       date: "12 jun 21",
     },
     {
+      id: 3,
       no: 3,
       name: "basic class",
-      link: "www.test.com",
-      linkText: "click me",
+      link: "http://www.test.com",
       date: "12 jun 21",
     },
     {
+      id: 4,
       no: 4,
       name: "2nos class",
-      link: "www.test.com",
-      linkText: "click me",
+      link: "http://www.test.com",
       date: "12 jun 21",
     },
   ],
@@ -71,7 +71,7 @@ export default function Classes() {
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
-                  align={column.align}
+                  align="center"
                   style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
@@ -86,10 +86,17 @@ export default function Classes() {
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === "number"
+                      <TableCell key={column.id} align="center">
+                        {/* {column.format && typeof value === "number"
                           ? column.format(value)
-                          : value}
+                          : value} */}
+                        {column.id === "link" ? (
+                          <a target="_blank" href={value}>
+                            Class Link
+                          </a>
+                        ) : (
+                          value
+                        )}
                       </TableCell>
                     );
                   })}

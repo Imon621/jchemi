@@ -4,18 +4,9 @@ import {
   makeStyles,
   Card,
   CardActionArea,
-  CardActions,
   CardContent,
-  CardMedia,
-  Button,
-  IconButton,
 } from "@material-ui/core";
 import React from "react";
-
-// adding icon
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
-import AddCircleIcon from "@material-ui/icons/AddCircle";
 
 const classes = makeStyles((theme) => ({
   cardRoot: {
@@ -25,7 +16,7 @@ const classes = makeStyles((theme) => ({
 
 export default function Chapter(props) {
   // login data
-  const [show, setShow] = React.useState(true);
+
   // test data
   const [dataModel, setDataModel] = React.useState({
     primary: {
@@ -118,41 +109,7 @@ export default function Chapter(props) {
     });
     return arr;
   };
-  // create function
-  const create = () => {};
-  // edit function
-  const edit = (id) => {
-    dataModel.primary.chapter.map((x) => {
-      if (x.id === id) {
-        alert(x.running);
-      }
-    });
-    if (dataModel.secondary) {
-      dataModel.secondary.chapter.map((x) => {
-        if (x.id === id) {
-          alert(x.running);
-        }
-      });
-    }
-  };
-  // remove function
-  const remove = (id) => {
-    const temp = dataModel.primary.chapter.filter((x) => {
-      return x.id !== id;
-    });
-    const data = dataModel;
-    data.primary.chapter = temp;
-    setDataModel({ ...data });
-    console.log(dataModel);
-    if (dataModel.secondary) {
-      const sectemp = dataModel.secondary.chapter.filter((x) => {
-        return x.id !== id;
-      });
-      const secdata = dataModel;
-      secdata.secondary.chapter = sectemp;
-      setDataModel({ ...secdata });
-    }
-  };
+  // List Function
   const List = (props) => {
     return (
       <>
@@ -182,26 +139,6 @@ export default function Chapter(props) {
                           <br />
                           Status: {x.running ? "Running" : "Finished"}
                           <br />
-                          {show ? (
-                            <>
-                              <IconButton
-                                onClick={() => {
-                                  setShow(!show);
-                                }}
-                              >
-                                <EditIcon color="secondary" />
-                              </IconButton>
-                              <IconButton
-                                onClick={() => {
-                                  remove(x.id);
-                                }}
-                              >
-                                <DeleteIcon color="error" />
-                              </IconButton>
-                            </>
-                          ) : (
-                            ""
-                          )}
                         </Typography>
                       </CardContent>
                     </CardActionArea>
@@ -209,6 +146,7 @@ export default function Chapter(props) {
                 </Grid>
               );
             })}
+            {/* <Form id={formId} /> */}
           </Grid>
           <Grid item xs={0} md={1} />
         </Grid>
@@ -218,33 +156,9 @@ export default function Chapter(props) {
   return (
     <>
       <List data={dataModel.primary} />
-      {show ? (
-        <CardActionArea>
-          <Typography variant="h5" color="secondary" gutterBottom>
-            <IconButton>
-              <AddCircleIcon color="secondary" />
-            </IconButton>
-            Add class group
-          </Typography>
-        </CardActionArea>
-      ) : (
-        ""
-      )}
       {dataModel.secondary ? (
         <>
           <List data={dataModel.secondary} />
-          {show ? (
-            <CardActionArea>
-              <Typography variant="h5" color="secondary" gutterBottom>
-                <IconButton>
-                  <AddCircleIcon color="secondary" />
-                </IconButton>
-                Add class group
-              </Typography>
-            </CardActionArea>
-          ) : (
-            ""
-          )}
         </>
       ) : (
         ""

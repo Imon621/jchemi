@@ -34,52 +34,45 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  NavLink
+  NavLink,
 } from "react-router-dom";
 import Classes from "../pages/Classes";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex"
+    display: "flex",
   },
   drawer: {
     [theme.breakpoints.up("sm")]: {
       width: drawerWidth,
-      flexShrink: 0
-    }
+      flexShrink: 0,
+    },
   },
   appBar: {
-    zIndex: theme.zIndex.drawer + 1
+    zIndex: theme.zIndex.drawer + 1,
   },
   menuButton: {
     marginRight: theme.spacing(2),
     [theme.breakpoints.up("sm")]: {
-      display: "none"
-    }
+      display: "none",
+    },
   },
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
-    width: drawerWidth
+    width: drawerWidth,
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
   },
   closeMenuButton: {
     marginRight: "auto",
-    marginLeft: 0
-  }
+    marginLeft: 0,
+  },
 }));
 function Nav() {
   const [expand, setExpand] = React.useState(false);
-  const dummyCategories = [
-    "Hokusai",
-    "Hiroshige",
-    "Utamaro",
-    "Kuniyoshi",
-    "Yoshitoshi"
-  ];
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -190,10 +183,10 @@ function Nav() {
               open={mobileOpen}
               onClose={handleDrawerToggle}
               classes={{
-                paper: classes.drawerPaper
+                paper: classes.drawerPaper,
               }}
               ModalProps={{
-                keepMounted: true // Better open performance on mobile.
+                keepMounted: true, // Better open performance on mobile.
               }}
             >
               <IconButton
@@ -210,7 +203,7 @@ function Nav() {
               className={classes.drawer}
               variant="permanent"
               classes={{
-                paper: classes.drawerPaper
+                paper: classes.drawerPaper,
               }}
             >
               <div className={classes.toolbar} />
@@ -248,6 +241,6 @@ function Nav() {
 Nav.propTypes = {
   // Injected by the documentation to work in an iframe.
   // You won't need it on your project.
-  container: PropTypes.object
+  container: PropTypes.object,
 };
 export default Nav;

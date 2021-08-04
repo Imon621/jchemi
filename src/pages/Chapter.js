@@ -11,6 +11,8 @@ import React from "react";
 
 import db from "../components/firebase";
 
+import { useParams, Link } from "react-router-dom";
+
 const classes = makeStyles((theme) => ({
   cardRoot: {
     maxWidth: 345,
@@ -105,9 +107,11 @@ export default function Chapter(props) {
   // test data
   const [chapter, setChapter] = React.useState("");
   // fetching data
+  let { course } = useParams();
+  // const [id, setId] = React.useState(useParams().id);
   React.useEffect(() => {
     db.collection("courses")
-      .doc("master")
+      .doc(course)
       .collection("chapter")
       .get()
       .then((x) => {
@@ -128,7 +132,7 @@ export default function Chapter(props) {
         });
         setChapter(arr);
       });
-  }, []);
+  }, useParams().course);
   // year filtering data
   const filt = (year) => {
     const arr = [];
@@ -161,23 +165,25 @@ export default function Chapter(props) {
                 <Grid item xs={10} md={4} lg={3} key={x.id}>
                   <Card className={classes.cardRoot}>
                     <CardActionArea>
-                      <CardContent>
-                        <Typography gutterBottom variant="h5" component="h2">
-                          {x.chapter + " - " + x.name}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
-                          component="p"
-                        >
-                          Class Started: {x.class_started}
-                          <br />
-                          Total Class: {x.total}
-                          <br />
-                          Status: {x.running ? "Running" : "Finished"}
-                          <br />
-                        </Typography>
-                      </CardContent>
+                      <Link to={`/classes/${course}/${x.id}`}>
+                        <CardContent>
+                          <Typography gutterBottom variant="h5" component="h2">
+                            {x.chapter + " - " + x.name}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            component="p"
+                          >
+                            Class Started: {x.class_started}
+                            <br />
+                            Total Class: {x.total}
+                            <br />
+                            Status: {x.running ? "Running" : "Finished"}
+                            <br />
+                          </Typography>
+                        </CardContent>
+                      </Link>
                     </CardActionArea>
                   </Card>
                 </Grid>

@@ -110,7 +110,7 @@ function Nav() {
           <List>
             <ListItem
               button
-              key="chapter"
+              key="hsc21"
               component={NavLink}
               to="/chapter/hsc21"
             >
@@ -121,7 +121,7 @@ function Nav() {
             </ListItem>
             <ListItem
               button
-              key="chapter"
+              key="hsc22"
               component={NavLink}
               to="/chapter/hsc22"
             >
@@ -132,7 +132,7 @@ function Nav() {
             </ListItem>
             <ListItem
               button
-              key="chapter"
+              key="master"
               component={NavLink}
               to="/chapter/master"
             >
@@ -220,17 +220,14 @@ function Nav() {
             <Route path="/about">
               <About />
             </Route>
-            <Route path="/chapter/hsc21">
-              <Chapter name="hsc 21" />
+            <Route path="/chapter/:course">
+              <Chapter />
             </Route>
-            <Route path="/chapter/hsc22">
-              <Chapter name="hsc 22" />
-            </Route>
-            <Route path="/chapter/master">
-              <Chapter name="hsc master" />
-            </Route>
-            <Route path="/classes">
+            <Route path="/classes/:course/:id">
               <Classes />
+            </Route>
+            <Route>
+              <>oops page not found</>
             </Route>
           </Switch>
         </div>

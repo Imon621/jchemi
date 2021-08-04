@@ -10,40 +10,43 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { makeStyles } from "@material-ui/core/styles";
 
-import {} from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 
-const data = {
-  classes: [
-    {
-      id: 1,
-      no: 1,
-      name: "basic class",
-      link: "http://www.test.com",
-      date: "12 jun 21",
-    },
-    {
-      id: 2,
-      no: 2,
-      name: "2nos class",
-      link: "http://www.test.com",
-      date: "12 jun 21",
-    },
-    {
-      id: 3,
-      no: 3,
-      name: "basic class",
-      link: "http://www.test.com",
-      date: "12 jun 21",
-    },
-    {
-      id: 4,
-      no: 4,
-      name: "2nos class",
-      link: "http://www.test.com",
-      date: "12 jun 21",
-    },
-  ],
-};
+import db from "../components/firebase";
+
+import { useParams } from "react-router-dom";
+
+// test data
+const data = [
+  {
+    id: 1,
+    no: 1,
+    name: "basic class",
+    link: "http://www.test.com",
+    date: "12 jun 21",
+  },
+  {
+    id: 2,
+    no: 2,
+    name: "2nos class",
+    link: "http://www.test.com",
+    date: "12 jun 21",
+  },
+  {
+    id: 3,
+    no: 3,
+    name: "basic class",
+    link: "http://www.test.com",
+    date: "12 jun 21",
+  },
+  {
+    id: 4,
+    no: 4,
+    name: "2nos class",
+    link: "http://www.test.com",
+    date: "12 jun 21",
+  },
+];
 
 const columns = [
   { id: "no", label: "No.", minWidth: 50 },
@@ -52,7 +55,7 @@ const columns = [
   { id: "link", label: "Links", minWidth: 50 },
 ];
 
-const classes = makeStyles({
+const styles = makeStyles({
   root: {
     width: "100%",
   },
@@ -62,50 +65,91 @@ const classes = makeStyles({
 });
 
 export default function Classes() {
+  const [classes, setClasses] = React.useState("");
+  let { course, id } = useParams();
+
+  React.useEffect(() => {
+    db.collection("courses")
+      .doc(course)
+      .collection("chapter")
+      .doc(id)
+      .collection("classes")
+      .get()
+      .then((x) => {
+        const arr = [];
+        x.docs.map((doc) => {
+          const obj = {
+            type: doc.data().type,
+            id: doc.id,
+            no: doc.data().no,
+            date: doc.data().date,
+            link: doc.data().link,
+            name: doc.data().name,
+          };
+          arr.push(obj);
+        });
+        setClasses(arr);
+      });
+  }, []);
   return (
-    <Paper className={classes.root}>
-      <TableContainer className={classes.container}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align="center"
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.classes.map((row) => {
-              return (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.no}>
-                  {columns.map((column) => {
-                    const value = row[column.id];
-                    return (
-                      <TableCell key={column.id} align="center">
-                        {/* {column.format && typeof value === "number"
+    <>
+      {classes !== "" ? (
+        <Paper className={styles.root}>
+          <TableContainer className={styles.container}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align="center"
+                      style={{ minWidth: column.minWidth }}
+                    >
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {classes.map((row) => {
+                  return (
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.no}>
+                      {columns.map((column) => {
+                        const value = row[column.id];
+                        return (
+                          <TableCell key={column.id} align="center">
+                            {/* {column.format && typeof value === "number"
                           ? column.format(value)
                           : value} */}
-                        {column.id === "link" ? (
-                          <a target="_blank" href={value}>
-                            Class Link
-                          </a>
-                        ) : (
-                          value
-                        )}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+                            {column.id === "link" ? (
+                              <a target="_blank" href={value}>
+                                Class Link
+                              </a>
+                            ) : (
+                              value
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      ) : (
+        <div
+          style={{
+            height: 70 + "vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress style={{}} />
+        </div>
+      )}
+    </>
   );
 }

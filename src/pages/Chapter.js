@@ -11,7 +11,10 @@ import React from "react";
 
 import db from "../components/firebase";
 
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Redirect } from "react-router-dom";
+// colors
+import green from "@material-ui/core/colors/green";
+import orange from "@material-ui/core/colors/orange";
 
 const classes = makeStyles((theme) => ({
   cardRoot: {
@@ -106,33 +109,42 @@ export default function Chapter(props) {
 
   // test data
   const [chapter, setChapter] = React.useState("");
+  const [redirectId, setRedirectId] = React.useState(null);
   // fetching data
   let { course } = useParams();
   // const [id, setId] = React.useState(useParams().id);
-  React.useEffect(() => {
+  const fetch = () => {
     db.collection("courses")
       .doc(course)
       .collection("chapter")
       .get()
       .then((x) => {
         const arr = [];
-        x.docs.map((doc) => {
-          const obj = {
-            year: doc.data().year,
-            id: doc.id,
-            no: doc.data().no,
-            chapter: doc.data().chapter,
-            class_started: doc.data().class_started,
-            name: doc.data().name,
-            total: doc.data().total,
-            running: doc.data().running,
-            tags: doc.data().tags,
-          };
-          arr.push(obj);
-        });
-        setChapter(arr);
+        if (x.docs.length !== 0) {
+          for (var doc of x.docs) {
+            const obj = {
+              year: doc.data().year,
+              id: doc.id,
+              no: doc.data().no,
+              chapter: doc.data().chapter,
+              class_started: doc.data().class_started,
+              name: doc.data().name,
+              total: doc.data().total,
+              running: doc.data().running,
+              tags: doc.data().tags,
+            };
+            arr.push(obj);
+          }
+          setChapter(arr);
+        } else {
+          setChapter([]);
+        }
       });
-  }, useParams().course);
+  };
+  React.useEffect(() => {
+    setChapter("");
+    fetch();
+  }, [useParams().course]);
   // year filtering data
   const filt = (year) => {
     const arr = [];
@@ -154,45 +166,66 @@ export default function Chapter(props) {
   const List = (props) => {
     return (
       <>
-        <Typography variant="h4" gutterBottom>
-          {props.data[0].year === "primary" ? "1st Year" : "2nd Year"}
-        </Typography>
-        <Grid container spacing={4}>
-          <Grid item xs={0} md={1} />
-          <Grid item container spacing={3} xs={12} md={10}>
-            {sorter(props.data).map((x) => {
-              return (
-                <Grid item xs={10} md={4} lg={3} key={x.id}>
-                  <Card className={classes.cardRoot}>
-                    <CardActionArea>
-                      <Link to={`/classes/${course}/${x.id}`}>
-                        <CardContent>
-                          <Typography gutterBottom variant="h5" component="h2">
-                            {x.chapter + " - " + x.name}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            component="p"
-                          >
-                            Class Started: {x.class_started}
-                            <br />
-                            Total Class: {x.total}
-                            <br />
-                            Status: {x.running ? "Running" : "Finished"}
-                            <br />
-                          </Typography>
-                        </CardContent>
-                      </Link>
-                    </CardActionArea>
-                  </Card>
-                </Grid>
-              );
-            })}
-            {/* <Form id={formId} /> */}
-          </Grid>
-          <Grid item xs={0} md={1} />
-        </Grid>
+        {props.data.length !== 0 ? (
+          <>
+            <Typography variant="h4" gutterBottom>
+              {props.data[0].year === "primary" ? "1st Year" : "2nd Year"}
+            </Typography>
+            <Grid container spacing={4}>
+              <Grid item xs={0} md={1} />
+              <Grid item container spacing={3} xs={12} md={10}>
+                {sorter(props.data).map((x) => {
+                  return (
+                    <Grid item xs={10} md={4} lg={3} key={x.id}>
+                      <Card className={classes.cardRoot}>
+                        <CardActionArea
+                          onClick={() => {
+                            setRedirectId(x.id);
+                          }}
+                        >
+                          <CardContent>
+                            <Typography
+                              gutterBottom
+                              variant="h5"
+                              component="h2"
+                            >
+                              {x.chapter + " - " + x.name}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              color="textSecondary"
+                              component="p"
+                            >
+                              Class Started: {x.class_started}
+                              <br />
+                              Total Class: {x.total}
+                              <br />
+                              Status:{" "}
+                              {x.running ? (
+                                <Typography style={{ color: orange[500] }}>
+                                  Running
+                                </Typography>
+                              ) : (
+                                <Typography style={{ color: green[500] }}>
+                                  Finished
+                                </Typography>
+                              )}
+                              <br />
+                            </Typography>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
+                    </Grid>
+                  );
+                })}
+                {/* <Form id={formId} /> */}
+              </Grid>
+              <Grid item xs={0} md={1} />
+            </Grid>
+          </>
+        ) : (
+          ""
+        )}
       </>
     );
   };
@@ -201,7 +234,16 @@ export default function Chapter(props) {
       {chapter !== "" ? (
         <>
           <List data={filt("primary")} />
-          {filt("secondary") ? <List data={filt("secondary")} /> : ""}
+          {filt("secondary").length !== 0 ? (
+            <List data={filt("secondary")} />
+          ) : (
+            ""
+          )}
+          {redirectId !== null ? (
+            <Redirect to={`/classes/${course}/${redirectId}`} />
+          ) : (
+            ""
+          )}
         </>
       ) : (
         <div

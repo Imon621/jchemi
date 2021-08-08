@@ -87,7 +87,16 @@ function Nav() {
             <ListItemText primary={text} />
           </ListItem>
         ))} */}
-        <ListItem button divider key="home" component={NavLink} to="/">
+        <ListItem
+          button
+          divider
+          key="home"
+          onClick={() => {
+            setMobileOpen(false);
+          }}
+          component={NavLink}
+          to="/"
+        >
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
@@ -111,6 +120,9 @@ function Nav() {
             <ListItem
               button
               key="hsc21"
+              onClick={() => {
+                setMobileOpen(false);
+              }}
               component={NavLink}
               to="/chapter/hsc21"
             >
@@ -122,6 +134,9 @@ function Nav() {
             <ListItem
               button
               key="hsc22"
+              onClick={() => {
+                setMobileOpen(false);
+              }}
               component={NavLink}
               to="/chapter/hsc22"
             >
@@ -133,6 +148,9 @@ function Nav() {
             <ListItem
               button
               key="master"
+              onClick={() => {
+                setMobileOpen(false);
+              }}
               component={NavLink}
               to="/chapter/master"
             >
@@ -144,7 +162,15 @@ function Nav() {
           </List>
           <Divider />
         </Collapse>
-        <ListItem button key="about" component={NavLink} to="/about">
+        <ListItem
+          button
+          key="about"
+          onClick={() => {
+            setMobileOpen(false);
+          }}
+          component={NavLink}
+          to="/about"
+        >
           <ListItemIcon>
             <InfoIcon />
           </ListItemIcon>
@@ -235,9 +261,9 @@ function Nav() {
     </Router>
   );
 }
-Nav.propTypes = {
-  // Injected by the documentation to work in an iframe.
-  // You won't need it on your project.
-  container: PropTypes.object,
-};
+// Nav.propTypes = {
+//   // Injected by the documentation to work in an iframe.
+//   // You won't need it on your project.
+//   container: PropTypes.object,
+// };
 export default Nav;

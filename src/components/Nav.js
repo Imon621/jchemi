@@ -13,7 +13,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import CloseIcon from "@material-ui/icons/Close";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles, rgbToHex, useTheme } from "@material-ui/core/styles";
 
 import { ListItemIcon, Collapse, Divider } from "@material-ui/core";
 
@@ -28,6 +28,7 @@ import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import Home from "../pages/Home";
 import About from "../pages/About";
 import Chapter from "../pages/Chapter";
+import Routine from "../pages/Routine";
 
 // react router dom
 import {
@@ -47,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       width: drawerWidth,
       flexShrink: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
     },
   },
   appBar: {
@@ -61,17 +63,17 @@ const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: drawerWidth,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
   },
   closeMenuButton: {
     marginRight: "auto",
     marginLeft: 0,
   },
 }));
-function Nav() {
+function Nav({ src, setSrc }) {
   const [expand, setExpand] = React.useState(false);
   const classes = useStyles();
   const theme = useTheme();
@@ -81,7 +83,13 @@ function Nav() {
   }
   const drawer = (
     <div>
-      <List component="nav" aria-label="main mailbox folders">
+      <List
+        style={{
+          backgroundColor: "rgba(255, 255, 255, 0.4)",
+        }}
+        component="nav"
+        aria-label="main mailbox folders"
+      >
         {/* {dummyCategories.map((text, index) => (
           <ListItem button key={text}>
             <ListItemText primary={text} />
@@ -164,6 +172,20 @@ function Nav() {
         </Collapse>
         <ListItem
           button
+          key="routine"
+          onClick={() => {
+            setMobileOpen(false);
+          }}
+          component={NavLink}
+          to="/routine"
+        >
+          <ListItemIcon>
+            <InfoIcon />
+          </ListItemIcon>
+          <ListItemText primary="routine and notices" />
+        </ListItem>
+        <ListItem
+          button
           key="about"
           onClick={() => {
             setMobileOpen(false);
@@ -241,10 +263,13 @@ function Nav() {
           <div className={classes.toolbar} />
           <Switch>
             <Route exact path="/">
-              <Home />
+              <Home src={src} setSrc={setSrc} />
             </Route>
             <Route path="/about">
               <About />
+            </Route>
+            <Route path="/routine">
+              <Routine />
             </Route>
             <Route path="/chapter/:course">
               <Chapter />

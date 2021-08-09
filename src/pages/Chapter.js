@@ -16,6 +16,8 @@ import { useParams, Link, Redirect } from "react-router-dom";
 import green from "@material-ui/core/colors/green";
 import orange from "@material-ui/core/colors/orange";
 
+import Error from "../components/Error";
+
 const classes = makeStyles((theme) => ({
   cardRoot: {
     maxWidth: 345,
@@ -110,10 +112,14 @@ export default function Chapter(props) {
   // test data
   const [chapter, setChapter] = React.useState("");
   const [redirectId, setRedirectId] = React.useState(null);
+  const [error, setError] = React.useState(false);
+
   // fetching data
   let { course } = useParams();
   // const [id, setId] = React.useState(useParams().id);
   const fetch = () => {
+    setError(false);
+    setChapter("");
     db.collection("courses")
       .doc(course)
       .collection("chapter")
@@ -136,8 +142,9 @@ export default function Chapter(props) {
             arr.push(obj);
           }
           setChapter(arr);
+          setError(false);
         } else {
-          setChapter([]);
+          setError(true);
         }
       });
   };
@@ -231,30 +238,46 @@ export default function Chapter(props) {
   };
   return (
     <>
-      {chapter !== "" ? (
+      {error ? (
         <>
-          <List data={filt("primary")} />
-          {filt("secondary").length !== 0 ? (
-            <List data={filt("secondary")} />
-          ) : (
-            ""
-          )}
-          {redirectId !== null ? (
-            <Redirect to={`/classes/${course}/${redirectId}`} />
-          ) : (
-            ""
-          )}
+          <Error fetch={fetch} />
         </>
       ) : (
         <div
           style={{
-            height: 70 + "vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            width: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.2)",
+            height: "93vh",
+            padding: 15,
+            overflow: "auto",
           }}
         >
-          <CircularProgress style={{}} />
+          {chapter !== "" ? (
+            <div>
+              <List data={filt("primary")} />
+              {filt("secondary").length !== 0 ? (
+                <List data={filt("secondary")} />
+              ) : (
+                ""
+              )}
+              {redirectId !== null ? (
+                <Redirect to={`/classes/${course}/${redirectId}`} />
+              ) : (
+                ""
+              )}
+            </div>
+          ) : (
+            <div
+              style={{
+                height: 70 + "vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress style={{}} />
+            </div>
+          )}
         </div>
       )}
     </>

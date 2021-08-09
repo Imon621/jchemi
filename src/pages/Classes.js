@@ -1,13 +1,7 @@
 import React from "react";
 
 // import ing material component
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+
 import { makeStyles } from "@material-ui/core/styles";
 // accordion
 import Accordion from "@material-ui/core/Accordion";
@@ -21,8 +15,10 @@ import { CircularProgress, Button } from "@material-ui/core";
 import db from "../components/firebase";
 
 import { useParams } from "react-router-dom";
-import zIndex from "@material-ui/core/styles/zIndex";
 
+import Error from "../components/Error";
+import { filt, sorter } from "../components/sorting";
+import Tableable from "../components/Table";
 // test data
 const data = [
   {
@@ -77,26 +73,11 @@ const useStyles = makeStyles({
 export default function Classes() {
   const [classes, setClasses] = React.useState("");
   let { course, id } = useParams();
-
-  // type filtering data
-  const filt = (type) => {
-    const arr = [];
-    classes.map((x) => {
-      if (x.type === type) {
-        arr.push(x);
-      }
-    });
-    return arr;
-  };
-  // sort function
-  const sorter = (arr) => {
-    arr.sort((a, b) => {
-      return a.no - b.no;
-    });
-    return arr;
-  };
+  const [error, setError] = React.useState(false);
 
   const fetch = () => {
+    setError(false);
+    setClasses("");
     db.collection("courses")
       .doc(course)
       .collection("chapter")
@@ -116,76 +97,35 @@ export default function Classes() {
           };
           arr.push(obj);
         }
-        // x.docs.map((doc) => {
-        //   const obj = {
-        //     type: doc.data().type,
-        //     id: doc.id,
-        //     no: doc.data().no,
-        //     date: doc.data().date,
-        //     link: doc.data().link,
-        //     name: doc.data().name,
-        //   };
-        //   arr.push(obj);
-        // });
         setClasses(arr);
+        if (x.docs.length === 0) {
+          setError(true);
+        } else {
+          setError(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setError(true);
       });
   };
 
   React.useEffect(() => {
     fetch();
   }, []);
-  const Tableable = ({ data }) => {
-    return (
-      <Paper style={{ width: "100%" }}>
-        <TableContainer style={{ minHeight: 440 }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align="center"
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sorter(data).map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.no}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align="center">
-                          {/* {column.format && typeof value === "number"
-                          ? column.format(value)
-                          : value} */}
-                          {column.id === "link" ? (
-                            <a target="_blank" href={value}>
-                              Class Link
-                            </a>
-                          ) : (
-                            value
-                          )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
-    );
-  };
+
   const Accor = () => {
     return (
       <>
-        <div style={{ width: "100%" }}>
+        <div
+          style={{
+            width: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.2)",
+            height: "93vh",
+            padding: 15,
+            overflow: "auto",
+          }}
+        >
           <Accordion defaultExpanded={true}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -196,7 +136,7 @@ export default function Classes() {
               <Typography className={{}}>Class Links</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Tableable data={filt("link")} />
+              <Tableable data={filt("link", classes)} columns={columns} />
             </AccordionDetails>
           </Accordion>
           <Accordion>
@@ -208,8 +148,8 @@ export default function Classes() {
               <Typography className={{}}>PDF Links</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              {filt("pdf").length !== 0 ? (
-                <Tableable data={filt("pdf")} />
+              {filt("pdf", classes).length !== 0 ? (
+                <Tableable data={filt("pdf", classes)} columns={columns} />
               ) : (
                 "Sorry, no pdf found."
               )}
@@ -224,8 +164,8 @@ export default function Classes() {
               <Typography className={{}}>Exam Links</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              {filt("exam").length !== 0 ? (
-                <Tableable data={filt("exam")} />
+              {filt("exam", classes).length !== 0 ? (
+                <Tableable data={filt("exam", classes)} columns={columns} />
               ) : (
                 "Sorry, no exam link found."
               )}
@@ -240,8 +180,8 @@ export default function Classes() {
               <Typography className={{}}>Massage</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              {filt("msg").length !== 0 ? (
-                <Tableable data={filt("msg")} />
+              {filt("msg", classes).length !== 0 ? (
+                <Tableable data={filt("msg", classes)} columns={columns} />
               ) : (
                 "Sorry, no pdf found."
               )}
@@ -253,21 +193,29 @@ export default function Classes() {
   };
   return (
     <>
-      {classes !== "" ? (
+      {error ? (
         <>
-          <Accor />
+          <Error fetch={fetch} />
         </>
       ) : (
-        <div
-          style={{
-            height: 70 + "vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <CircularProgress style={{}} />
-        </div>
+        <>
+          {classes !== "" ? (
+            <>
+              <Accor />
+            </>
+          ) : (
+            <div
+              style={{
+                height: 70 + "vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress style={{}} />
+            </div>
+          )}
+        </>
       )}
     </>
   );

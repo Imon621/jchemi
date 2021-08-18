@@ -3,31 +3,44 @@ import "./App.css";
 import Nav from "./components/Nav";
 
 import { createTheme, ThemeProvider } from "@material-ui/core/styles";
-import purple from "@material-ui/core/colors/purple";
+import indigo from "@material-ui/core/colors/indigo";
 import blue from "@material-ui/core/colors/blue";
 
-import test from "./test.jpg";
-import React from "react";
+import React, { useEffect } from "react";
+import db from "./components/firebase";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: purple[500],
+      main: indigo[500],
+      light: indigo[700],
+      dark: indigo[300],
     },
     secondary: {
-      main: blue[500],
+      main: blue[800],
+      light: blue[700],
+      dark: blue[300],
     },
   },
 });
 
 function App() {
   const [src, setSrc] = React.useState("");
-  console.log(src);
+  useEffect(() => {
+    try {
+      db.collection("app")
+        .doc("data")
+        .get()
+        .then((x) => {
+          setSrc(x.data().image);
+        });
+    } catch (e) {}
+  }, []);
   return (
     <ThemeProvider theme={theme}>
       <div
         style={{
-          backgroundImage: src === "" ? `url(${test})` : src,
+          backgroundImage: `url(${src})`,
           backgroundSize: "100% 100%",
           width: "100%",
           height: "100vh",

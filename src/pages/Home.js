@@ -23,7 +23,7 @@ export default function Home({ src, setSrc }) {
           setError(true);
         } else {
           if (data.image !== "") {
-            console.log(data.image)
+            console.log(data.image);
           }
           setError(false);
         }
@@ -55,24 +55,37 @@ export default function Home({ src, setSrc }) {
             justifyContent: "center",
           }}
         >
-          <Typography variant="h3" style={{ fontFamily: "cursive" }}>
+          <Typography
+            variant="h3"
+            style={{ fontFamily: "'Style Script', cursive" }}
+          >
             Jewel Chemistry
           </Typography>
           <Typography variant="h5">View ongoing courses:</Typography>
-          {data.running.map((x) => {
-            return (
-              <>
-                <Button
-                  color="primary"
-                  onClick={() => {
-                    setRedirectId(x.link);
-                  }}
-                >
-                  {x.name}
-                </Button>
-              </>
-            );
-          })}
+
+          {data === "" ? (
+            <div style={{}}>
+              <CircularProgress style={{}} />
+            </div>
+          ) : (
+            <>
+              {data.running.map((x) => {
+                return (
+                  <>
+                    <Button
+                      onClick={() => {
+                        setRedirectId(x.link);
+                      }}
+                    >
+                      <Typography variant="body1" gutterBottom>
+                        {x.name}
+                      </Typography>
+                    </Button>
+                  </>
+                );
+              })}
+            </>
+          )}
           {redirectId !== null ? (
             <Redirect to={`/classes/master/${redirectId}`} />
           ) : (
@@ -98,22 +111,7 @@ export default function Home({ src, setSrc }) {
           </>
         ) : (
           <>
-            {data !== "" ? (
-              <>
-                <Hm />
-              </>
-            ) : (
-              <div
-                style={{
-                  height: 70 + "vh",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <CircularProgress style={{}} />
-              </div>
-            )}
+            <Hm />
           </>
         )}
       </>

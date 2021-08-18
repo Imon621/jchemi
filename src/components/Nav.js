@@ -36,8 +36,12 @@ import {
   Switch,
   Route,
   NavLink,
+  Link,
 } from "react-router-dom";
 import Classes from "../pages/Classes";
+
+import logo from "../logo.png";
+import { display, textAlign } from "@material-ui/system";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -216,9 +220,22 @@ function Nav({ src, setSrc }) {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap>
-              Logo
-            </Typography>
+            <Link
+              to="/"
+              style={{
+                color: "white",
+                textDecoration: "none",
+                textAlign: "center",
+              }}
+            >
+              <span style={{ fontFamily: "Noto Sans JP" }}>
+                <span>JE</span>
+                <span style={{}}>W</span>
+                <span>EL</span>
+                <br />
+                <span style={{ color: "limegreen" }}>CHEMISTRY</span>
+              </span>
+            </Link>
           </Toolbar>
         </AppBar>
 

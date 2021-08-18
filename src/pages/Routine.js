@@ -1,8 +1,9 @@
 import React from "react";
 import Tableable from "../components/Table";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress, Typography } from "@material-ui/core";
 import db from "../components/firebase";
 import Error from "../components/Error";
+import { filt } from "../components/sorting";
 
 export default function Routin() {
   const [data, setData] = React.useState("");
@@ -69,7 +70,22 @@ export default function Routin() {
           <>
             {data !== "" ? (
               <>
-                <Tableable data={data} columns={columns} />
+                {filt("routine", data).length !== 0 ? (
+                  <>
+                    <Typography variant="h6">Routine</Typography>
+                    <Tableable data={filt("routine", data)} columns={columns} />
+                  </>
+                ) : (
+                  ""
+                )}
+                {filt("notice", data).length !== 0 ? (
+                  <>
+                    <Typography variant="h6">Notice</Typography>
+                    <Tableable data={filt("notice", data)} columns={columns} />
+                  </>
+                ) : (
+                  ""
+                )}
               </>
             ) : (
               <div

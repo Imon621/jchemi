@@ -39,13 +39,21 @@ export default function Tableable({ data, columns }) {
                         {/* {column.format && typeof value === "number"
                           ? column.format(value)
                           : value} */}
-                        {column.id === "link" ? (
-                          <a target="_blank" href={value}>
-                            Class Link
-                          </a>
-                        ) : (
-                          value
-                        )}
+                        <>
+                          {column.id === "link" ? (
+                            <>
+                              {value !== "" ? (
+                                <a target="_blank" href={value}>
+                                  Link
+                                </a>
+                              ) : (
+                                ""
+                              )}
+                            </>
+                          ) : (
+                            <>{value.toString()}</>
+                          )}
+                        </>
                       </TableCell>
                     );
                   })}

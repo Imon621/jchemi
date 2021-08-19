@@ -82,23 +82,11 @@ export default function Classes() {
       .doc(course)
       .collection("chapter")
       .doc(id)
-      .collection("classes")
       .get()
       .then((x) => {
-        const arr = [];
-        for (var doc of x.docs) {
-          const obj = {
-            type: doc.data().type,
-            id: doc.id,
-            no: doc.data().no,
-            date: doc.data().date,
-            link: doc.data().link,
-            name: doc.data().name,
-          };
-          arr.push(obj);
-        }
+        const arr = x.data().classes !== undefined ? x.data().classes : [];
         setClasses(arr);
-        if (x.docs.length === 0) {
+        if (arr.length === 0) {
           setError(true);
         } else {
           setError(false);

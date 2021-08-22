@@ -6,6 +6,7 @@ import {
   CardActionArea,
   CircularProgress,
   CardContent,
+  IconButton,
 } from "@material-ui/core";
 import React from "react";
 
@@ -15,6 +16,8 @@ import { useParams, Link, Redirect } from "react-router-dom";
 // colors
 import green from "@material-ui/core/colors/green";
 import orange from "@material-ui/core/colors/orange";
+
+import SyncIcon from "@material-ui/icons/Sync";
 
 import Error from "../components/Error";
 
@@ -128,6 +131,13 @@ export default function Chapter(props) {
         const arr = [];
         if (x.docs.length !== 0) {
           for (var doc of x.docs) {
+            localStorage.setItem(
+              doc.id.toString(),
+              JSON.stringify({
+                classes: doc.data().classes,
+                date: new Date().getDate(),
+              })
+            );
             const obj = {
               year: doc.data().year,
               id: doc.id,
@@ -142,6 +152,10 @@ export default function Chapter(props) {
             arr.push(obj);
           }
           setChapter(arr);
+          localStorage.setItem(
+            `${course}`,
+            JSON.stringify({ arr: arr, date: new Date().getDate() })
+          );
           setError(false);
         } else {
           setError(true);
@@ -149,8 +163,19 @@ export default function Chapter(props) {
       });
   };
   React.useEffect(() => {
-    setChapter("");
-    fetch();
+    if (localStorage.getItem(course) !== null) {
+      if (
+        JSON.parse(localStorage.getItem(course)).date === new Date().getDate()
+      ) {
+        setChapter(JSON.parse(localStorage.getItem(course)).arr);
+      } else {
+        setChapter("");
+        fetch();
+      }
+    } else {
+      setChapter("");
+      fetch();
+    }
   }, [useParams().course]);
   // year filtering data
   const filt = (year) => {
@@ -254,12 +279,24 @@ export default function Chapter(props) {
         >
           {chapter !== "" ? (
             <div>
+              <div style={{ float: "right" }}>
+                <IconButton
+                  color="primary"
+                  onClick={() => {
+                    setChapter("");
+                    fetch();
+                  }}
+                >
+                  <SyncIcon />
+                </IconButton>
+              </div>
               <List data={filt("primary")} />
               {filt("secondary").length !== 0 ? (
                 <List data={filt("secondary")} />
               ) : (
                 ""
               )}
+
               {redirectId !== null ? (
                 <Redirect to={`/classes/${course}/${redirectId}`} />
               ) : (

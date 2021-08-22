@@ -10,11 +10,13 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
-import { CircularProgress, Button } from "@material-ui/core";
+import { CircularProgress, Button, IconButton } from "@material-ui/core";
 
 import db from "../components/firebase";
 
 import { useParams } from "react-router-dom";
+
+import SyncIcon from "@material-ui/icons/Sync";
 
 import Error from "../components/Error";
 import { filt, sorter } from "../components/sorting";
@@ -85,6 +87,10 @@ export default function Classes() {
       .get()
       .then((x) => {
         const arr = x.data().classes !== undefined ? x.data().classes : [];
+        localStorage.setItem(
+          `${id}`,
+          JSON.stringify({ classes: arr, date: new Date().getDate() })
+        );
         setClasses(arr);
         if (arr.length === 0) {
           setError(true);
@@ -99,7 +105,24 @@ export default function Classes() {
   };
 
   React.useEffect(() => {
-    fetch();
+    if (localStorage.getItem(id) !== null) {
+      if (JSON.parse(localStorage.getItem(id)).date === new Date().getDate()) {
+        const cls = JSON.parse(localStorage.getItem(id)).classes;
+        if (cls !== [] && cls !== undefined) {
+          setClasses(JSON.parse(localStorage.getItem(id)).classes);
+        } else {
+          setClasses("");
+          setError(true);
+        }
+      } else {
+        setClasses("");
+        fetch();
+      }
+    } else {
+      setClasses("");
+      fetch();
+    }
+    // fetch();
   }, []);
 
   const Accor = () => {
@@ -175,6 +198,17 @@ export default function Classes() {
               )}
             </AccordionDetails>
           </Accordion>
+          <div style={{ float: "right", backgroundColor: "gray" }}>
+            <IconButton
+              color="primary"
+              onClick={() => {
+                setClasses("");
+                fetch();
+              }}
+            >
+              <SyncIcon />
+            </IconButton>
+          </div>
         </div>
       </>
     );

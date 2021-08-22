@@ -27,14 +27,50 @@ const theme = createTheme({
 function App() {
   const [src, setSrc] = React.useState("");
   useEffect(() => {
-    try {
-      db.collection("app")
-        .doc("data")
-        .get()
-        .then((x) => {
-          setSrc(x.data().image);
-        });
-    } catch (e) {}
+    if (localStorage.getItem("image") !== null) {
+      if (localStorage.getItem("image").date !== new Date().getDate()) {
+        try {
+          db.collection("app")
+            .doc("data")
+            .get()
+            .then((x) => {
+              setSrc(x.data().image);
+              localStorage.setItem(
+                "image",
+                JSON.stringify({
+                  date: new Date().getDate(),
+                  image: x.data().image,
+                })
+              );
+            });
+        } catch (e) {}
+      } else {
+        setSrc(JSON.parse(localStorage.getItem("image")).image);
+      }
+    } else {
+      localStorage.setItem(
+        "image",
+        JSON.stringify({
+          date: 0,
+          image: "",
+        })
+      );
+      try {
+        db.collection("app")
+          .doc("data")
+          .get()
+          .then((x) => {
+            setSrc(x.data().image);
+            localStorage.setItem(
+              "image",
+              JSON.stringify({
+                date: new Date().getDate(),
+                image: x.data().image,
+              })
+            );
+          });
+      } catch (e) {}
+    }
   }, []);
   return (
     <ThemeProvider theme={theme}>

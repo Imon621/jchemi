@@ -13,7 +13,7 @@ import { sorter } from "./sorting";
 export default function Tableable({ data, columns }) {
   return (
     <Paper style={{ width: "100%" }}>
-      <TableContainer style={{ minHeight: 440 }}>
+      <TableContainer style={{ height: "60vh" }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
